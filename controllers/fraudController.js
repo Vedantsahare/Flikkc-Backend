@@ -1,46 +1,70 @@
-const Device=require("../models/Device")
-const User=require("../models/User")
-const FraudLog=require("../models/FraudLog")
+import Device from "../models/Device.js";
+import User from "../models/User.js";
+import FraudLog from "../models/FraudLog.js";
+import calculateRisk from "../utils/riskScore.js";
 
-const calculateRisk=require("../utils/riskScore")
+/**
+ * Track user device & detect fraud patterns
+ */
+export const trackDevice = async (req, res) => {
+  try {
+    const { fingerprint } = req.body;
+    const userId = req.user.id;
+    const ip = req.ip;
+    const userAgent = req.headers["user-agent"];
 
-exports.trackDevice=async(req,res)=>{
+    if (!fingerprint) {
+      return res.status(400).json({ message: "Fingerprint required" });
+    }
 
- const {fingerprint}=req.body
+    // Check existing devices
+    const existingDevices = await Device.find({ fingerprint });
 
- const ip=req.ip
+    let flags = [];
 
- const existing=await Device.find({fingerprint})
+    if (existingDevices.length >= 3) {
+      flags.push("duplicate_device");
 
- if(existing.length>3){
+      const user = await User.findById(userId);
 
- const user=await User.findById(req.user.id)
+      if (user) {
+        user.fraudFlags = [...new Set([...(user.fraudFlags || []), ...flags])];
 
- user.fraudFlags.push("duplicate_device")
+        const risk = calculateRisk(user.fraudFlags);
 
- const risk=calculateRisk(user.fraudFlags)
+        user.riskScore = risk;
 
- user.riskScore=risk
+        if (risk > 80) {
+          user.withdrawalBlocked = true;
+        }
 
- await user.save()
+        await user.save();
 
- await FraudLog.create({
-  userId:user._id,
-  reason:"duplicate_device",
-  riskScore:risk
- })
+        await FraudLog.create({
+          userId: user._id,
+          reason: "duplicate_device",
+          riskScore: risk,
+        });
+      }
+    }
 
- }
+    // Save/update device
+    await Device.updateOne(
+      { fingerprint, userId },
+      {
+        ip,
+        userAgent,
+        lastSeen: new Date(),
+      },
+      { upsert: true }
+    );
 
- await Device.create({
-
-  userId:req.user.id,
-  fingerprint,
-  ip,
-  userAgent:req.headers["user-agent"]
-
- })
-
- res.json({success:true})
-
-}
+    return res.json({
+      success: true,
+      flags,
+    });
+  } catch (error) {
+    console.error("trackDevice error:", error);
+    return res.status(500).json({ message: "Server error" });
+  }
+};
