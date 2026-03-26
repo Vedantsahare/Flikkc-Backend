@@ -1,4 +1,4 @@
-import dotenvSafe from "dotenv-safe";
+import dotenvSafe from "dotenv";
 
 dotenvSafe.config({
   allowEmptyValues: true,
