@@ -3,8 +3,8 @@ import Profile from "../models/Profile.js";
 import multer from "multer";
 import { CloudinaryStorage } from "multer-storage-cloudinary";
 import cloudinary from "../config/cloudinary.js";
-import auth from "../middlewares/auth.js";
-import legalGuard from "../middlewares/legalGuard.js";
+import auth from "../middleware/auth.js";
+import legalGuard from "../middleware/legalGuard.js";
 import upload from "../middleware/upload.js";
 import { uploadAvatar } from "../controllers/uploadController.js";
 

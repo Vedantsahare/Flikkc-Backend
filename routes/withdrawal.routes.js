@@ -1,11 +1,11 @@
 import express from "express";
 import { requestWithdrawal } from "../controllers/withdrawalController.js";
-import auth from "../middlewares/auth.js";
-import { userAccessGuard } from "../middlewares/userAccessGuard.js";
-import { withdrawalGuard } from "../middlewares/withdrawalGuard.js";
-import { kycGuard } from "../middlewares/kycGuard.js";
-import { walletGuard } from "../middlewares/walletGuard.js";
-import { systemGuard } from "../middlewares/systemGuard.js";
+import auth from "../middleware/auth.js";
+import { userAccessGuard } from "../middleware/userAccessGuard.js";
+import { withdrawalGuard } from "../middleware/withdrawalGuard.js";
+import { kycGuard } from "../middleware/kycGuard.js";
+import { walletGuard } from "../middleware/walletGuard.js";
+import { systemGuard } from "../middleware/systemGuard.js";
 
 const router = express.Router();
 

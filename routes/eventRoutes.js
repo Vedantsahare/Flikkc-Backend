@@ -1,9 +1,9 @@
 import express from "express";
 import { getEvents, joinEvent } from "../controllers/eventController.js";
 import { submitEventResults } from "../controllers/eventResultController.js";
-import auth from "../middlewares/auth.js";
+import auth from "../middleware/auth.js";
 import { roleGuard } from "../middlewares/roleGuard.js";
-import { cache } from "../middlewares/cache.js";
+import { cache } from "../middleware/cache.js";
 
 const router = express.Router();
 
