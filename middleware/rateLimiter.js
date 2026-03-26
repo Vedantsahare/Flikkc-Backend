@@ -1,72 +1,50 @@
 import rateLimit from "express-rate-limit";
+import { ipKeyGenerator } from "express-rate-limit";
 
 /**
- * Common safe key generator
- * - Uses user ID if available
- * - Falls back to IP (IPv6-safe)
+ * Safe key generator (IPv6 compliant)
  */
 const generateKey = (req) => {
   if (req.user?.id) {
     return `user:${req.user.id}`;
   }
 
-  return req.ip; // safe fallback (library handles IPv6)
+  return ipKeyGenerator(req); // ✅ REQUIRED FIX
 };
 
-/* =========================
-   GLOBAL API LIMITER
-========================= */
-
+/* GLOBAL */
 export const apiLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   max: 100,
-
   standardHeaders: true,
   legacyHeaders: false,
-
   keyGenerator: generateKey,
 });
 
-/* =========================
-   PROFILE LIMITER
-========================= */
-
+/* PROFILE */
 export const profileLimiter = rateLimit({
   windowMs: 10 * 60 * 1000,
   max: 5,
-
   keyGenerator: generateKey,
 });
 
-/* =========================
-   WALLET LIMITER (HIGH SECURITY)
-========================= */
-
+/* WALLET */
 export const walletLimiter = rateLimit({
   windowMs: 5 * 60 * 1000,
   max: 3,
-
   keyGenerator: generateKey,
 });
 
-/* =========================
-   IP BURST LIMITER
-========================= */
-
+/* IP */
 export const ipLimiter = rateLimit({
   windowMs: 60 * 1000,
   max: 100,
-
-  keyGenerator: (req) => req.ip,
+  keyGenerator: ipKeyGenerator, // ✅ IMPORTANT
 });
 
-/* =========================
-   USER ACTION LIMITER
-========================= */
-
+/* USER */
 export const userLimiter = rateLimit({
   windowMs: 60 * 1000,
   max: 50,
-
   keyGenerator: generateKey,
 });

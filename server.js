@@ -11,7 +11,6 @@ import morgan from "morgan";
 import helmet from "helmet";
 import http from "http";
 import { Server } from "socket.io";
-import * as Sentry from "@sentry/node";
 import cookieParser from "cookie-parser";
 
 import { connectDB } from "./config/db.js";
@@ -49,16 +48,6 @@ import { createClient } from "redis";
 const app = express();
 const server = http.createServer(app);
 app.set("trust proxy", 1);
-
-/* =========================
-   SENTRY
-========================= */
-
-Sentry.init({
-  dsn: process.env.SENTRY_DSN,
-  tracesSampleRate: 1.0
-});
-
 
 
 /* =========================
