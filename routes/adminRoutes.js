@@ -2,11 +2,11 @@ import express from "express";
 import auth from "../middleware/auth.js";
 import { roleGuard } from "../middleware/roleGuard.js";
 
-import { adjustWallet } from "../controllers/adminWalletController.js";
-import { addAdminNote, getAdminNotes } from "../controllers/adminNotesController.js";
-import { investigateUser } from "../controllers/adminFraudController.js";
-import { approvePendingAction } from "../controllers/adminApprovalController.js";
-import { updateSystemStatus } from "../controllers/adminSystemController.js";
+import { adjustWallet } from "../controllers/admin/adminWalletController.js";
+import { addAdminNote, getAdminNotes } from "../controllers/admin/adminNotesController.js";
+import { investigateUser } from "../controllers/admin/adminFraudController.js";
+import { approvePendingAction } from "../controllers//admin/adminApprovalController.js";
+import { updateSystemStatus } from "../controllers/admin/adminSystemController.js";
 
 const router = express.Router();
 
