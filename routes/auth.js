@@ -7,7 +7,7 @@ import User from "../models/User.js";
 import { processWalletTransaction } from "../services/walletservice.js";
 import { acceptLegal } from "../controllers/authController.js";
 
-import auth from "../middlewares/auth.js";
+import auth from "../middleware/auth.js";
 import { apiLimiter } from "../middleware/rateLimiter.js";
 
 /* 🔥 OTP CONTROLLERS */
