@@ -1,8 +1,8 @@
 import User from "../models/User.js";
 import BotLog from "../models/BotLog.js";
 
-import detectBotBehavior from "../utils/botDetector.js";
-import detectWalletFraud from "../utils/walletFraudDetector.js";
+import { detectBotBehavior } from "../utils/botDetector.js";
+import { detectWalletFraud } from "../utils/walletFraudDetector.js";
 import calculateRisk from "../utils/riskScore.js";
 
 /**
