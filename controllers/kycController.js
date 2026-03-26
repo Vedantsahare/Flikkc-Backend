@@ -3,8 +3,8 @@ import Kyc from "../models/KYC.js";
 import Otp from "../models/Otp.js";
 
 import { generateOtp } from "../utils/generateOtp.js";
-import validatePan from "../utils/panValidator.js";
-import validateAadhaar from "../utils/aadhaarValidator.js";
+import { validatePan } from "../utils/panValidator.js";
+import { validateAadhaar } from "../utils/aadhaarValidator.js";
 
 
 export const sendPhoneOtp = async (req, res) => {
