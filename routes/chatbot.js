@@ -1,6 +1,6 @@
 import express from "express";
 import OpenAI from "openai";
-import authMiddleware from "../middleware/auth.js";
+import auth from "../middleware/auth.js";
 
 const router = express.Router();
 
@@ -15,7 +15,7 @@ Rules:
 - Keep responses clear and professional.
 `;
 
-router.post("/", authMiddleware, async (req, res) => {
+router.post("/", auth, async (req, res) => {
   try {
     // ✅ Initialize OpenAI INSIDE handler (after env is loaded)
     const openai = new OpenAI({

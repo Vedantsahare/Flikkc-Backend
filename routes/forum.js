@@ -1,7 +1,7 @@
 // routes/forum.js
 import express from "express";
 import Forum from "../models/Forum.js";
-import authMiddleware from "../middleware/authMiddleware.js";
+import auth from "../middleware/auth.js";
 
 const router = express.Router();
 
@@ -19,7 +19,7 @@ router.get("/", async (req, res) => {
 });
 
 // ✅ Create new forum post
-router.post("/", authMiddleware, async (req, res) => {
+router.post("/", auth, async (req, res) => {
   try {
     const { title, content } = req.body;
     if (!title || !content) {
@@ -56,7 +56,7 @@ router.get("/:id", async (req, res) => {
 });
 
 // ✅ Add reply to a post
-router.post("/:id/reply", authMiddleware, async (req, res) => {
+router.post("/:id/reply", auth, async (req, res) => {
   try {
     const { content } = req.body;
     if (!content) {
