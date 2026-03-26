@@ -1,56 +1,101 @@
-const User=require("../models/User")
-const BotLog=require("../models/BotLog")
+import User from "../models/User.js";
+import BotLog from "../models/BotLog.js";
 
-const detectBotBehavior=require("../utils/botDetector")
-const detectWalletFraud=require("../utils/walletFraudDetector")
+import detectBotBehavior from "../utils/botDetector.js";
+import detectWalletFraud from "../utils/walletFraudDetector.js";
+import calculateRisk from "../utils/riskScore.js";
 
-exports.checkBot=async(req,res)=>{
+/**
+ * Detect bot activity
+ */
+export const checkBot = async (req, res) => {
+  try {
+    const { actions } = req.body;
+    const userId = req.user.id;
 
- const {actions}=req.body
+    const isBot = detectBotBehavior(actions || []);
 
- const isBot=detectBotBehavior(actions)
+    let flags = [];
 
- if(isBot){
+    if (isBot) {
+      flags.push("bot_activity");
 
-  const user=await User.findById(req.user.id)
+      const user = await User.findById(userId);
 
-  user.fraudFlags.push("bot_activity")
+      if (user) {
+        user.fraudFlags = [
+          ...new Set([...(user.fraudFlags || []), ...flags]),
+        ];
 
-  user.riskScore+=40
+        const risk = calculateRisk(user.fraudFlags);
 
-  await user.save()
+        user.riskScore = risk;
 
-  await BotLog.create({
+        if (risk > 80) {
+          user.withdrawalBlocked = true;
+        }
 
-   userId:user._id,
-   reason:"bot_activity"
+        await user.save();
 
-  })
+        await BotLog.create({
+          userId: user._id,
+          reason: "bot_activity",
+          riskScore: risk,
+        });
+      }
+    }
 
- }
+    return res.json({
+      success: true,
+      botDetected: isBot,
+      flags,
+    });
+  } catch (error) {
+    console.error("checkBot error:", error);
+    return res.status(500).json({ message: "Server error" });
+  }
+};
 
- res.json({botDetected:isBot})
+/**
+ * Detect wallet fraud
+ */
+export const checkWalletFraud = async (req, res) => {
+  try {
+    const userId = req.user.id;
 
-}
+    const fraud = await detectWalletFraud(userId);
 
+    let flags = [];
 
+    if (fraud) {
+      flags.push("wallet_laundering");
 
-exports.checkWalletFraud=async(req,res)=>{
+      const user = await User.findById(userId);
 
- const fraud=await detectWalletFraud(req.user.id)
+      if (user) {
+        user.fraudFlags = [
+          ...new Set([...(user.fraudFlags || []), ...flags]),
+        ];
 
- if(fraud){
+        const risk = calculateRisk(user.fraudFlags);
 
-  const user=await User.findById(req.user.id)
+        user.riskScore = risk;
 
-  user.fraudFlags.push("wallet_laundering")
+        if (risk > 80) {
+          user.withdrawalBlocked = true;
+        }
 
-  user.riskScore+=50
+        await user.save();
+      }
+    }
 
-  await user.save()
-
- }
-
- res.json({walletFraud:fraud})
-
-}
+    return res.json({
+      success: true,
+      walletFraud: fraud,
+      flags,
+    });
+  } catch (error) {
+    console.error("checkWalletFraud error:", error);
+    return res.status(500).json({ message: "Server error" });
+  }
+};
