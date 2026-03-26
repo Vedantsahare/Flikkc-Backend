@@ -1,7 +1,7 @@
 import User from "../../models/User.js";
 import Wallet from "../../models/Wallet.js";
 import Transaction from "../../models/Transaction.js";
-import AdminNote from "../../models/AdminNote.js";
+import AdminNote from "../../models/admin/AdminNote.js";
 
 /* =========================
    Fraud investigation

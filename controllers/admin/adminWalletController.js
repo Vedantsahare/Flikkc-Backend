@@ -1,5 +1,5 @@
 import Wallet from "../../models/Wallet.js";
-import AdminPendingAction from "../../models/AdminPendingAction.js";
+import AdminPendingAction from "../../models/admin/AdminPendingAction.js";
 import { logAdminAction } from "../../utils/logAdminAction.js";
 
 /* =========================

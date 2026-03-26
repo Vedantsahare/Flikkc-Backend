@@ -1,4 +1,4 @@
-import AdminPendingAction from "../../models/AdminPendingAction.js";
+import AdminPendingAction from "../../models/admin/AdminPendingAction.js";
 import { executeAdminAction } from "../../utils/adminActionExecutor.js";
 import { logAdminAction } from "../../utils/adminLogger.js";
 
