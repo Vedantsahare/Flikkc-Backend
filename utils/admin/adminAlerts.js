@@ -1,4 +1,4 @@
-import fetch from "node-fetch";
+
 
 const DISCORD_WEBHOOK = process.env.ADMIN_ALERT_WEBHOOK;
 
